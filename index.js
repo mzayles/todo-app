@@ -9,15 +9,14 @@ app.set('view engine', 'handlebars')
 
 app.use(express.static('public'))
 
-// converter dados do formulário em objetos javascrip
 app.use(express.urlencoded({
     extended: true
 }))
 
-
 app.use(express.json())
 
 // rotas
+
 app.get('/limpartarefas', (requisicao, resposta) => {
     const sql = 'DELETE FROM tarefas'
 
@@ -31,10 +30,10 @@ app.get('/limpartarefas', (requisicao, resposta) => {
 })
 
 app.post('/excluir', (requisicao, resposta) => {
-    const id = requisicao.body.id
+    const id = requisicao.body.id 
 
     const sql = `
-        DELETE FROM tarefas
+        DELETE FROM tarefas 
         WHERE id = ${id}
     `
 
@@ -49,7 +48,7 @@ app.post('/excluir', (requisicao, resposta) => {
 
 app.post('/completar', (requisicao, resposta) => {
     const id = requisicao.body.id
-
+    
     const sql = `
         UPDATE tarefas 
         SET completa = '1'
@@ -69,14 +68,14 @@ app.post('/descompletar', (requisicao, resposta) => {
     const id = requisicao.body.id
 
     const sql = `
-        UPTADE tarefas
+        UPDATE tarefas
         SET completa = '0'
         WHERE id = ${id}
     `
 
     conexao.query(sql, (erro) => {
         if (erro) {
-            return console.log(erro)
+            console.log(erro)
         }
 
         resposta.redirect('/')
@@ -89,15 +88,16 @@ app.post('/criar', (requisicao, resposta) => {
 
     const sql = `
         INSERT INTO tarefas(descricao, completa)
-        VALUES('${descricao}', '${completa}')
+        VALUES ('${descricao}', '${completa}')
     `
-    conexao.query(sql), (erro) => {
+
+    conexao.query(sql, (erro) => {
         if (erro) {
             return console.log(erro)
         }
 
         resposta.redirect('/')
-    } 
+    })
 })
 
 app.get('/completas', (requisicao, resposta) => {
@@ -114,7 +114,7 @@ app.get('/completas', (requisicao, resposta) => {
         const tarefas = dados.map((dado) => {
             return {
                 id: dado.id,
-                descricao: dado.descricao, 
+                descricao: dado.descricao,
                 completa: true
             }
         })
@@ -142,7 +142,7 @@ app.get('/ativas', (requisicao, resposta) => {
                 descricao: dado.descricao,
                 completa: false
             }
-        }) 
+        })
 
         const quantidadeTarefas = tarefas.length
 
@@ -151,7 +151,7 @@ app.get('/ativas', (requisicao, resposta) => {
 })
 
 app.get('/', (requisicao, resposta) => {
-    const set = 'SELECT * FROM tarefas'
+    const sql = 'SELECT * FROM tarefas'
 
     conexao.query(sql, (erro, dados) => {
         if (erro) {
@@ -164,7 +164,7 @@ app.get('/', (requisicao, resposta) => {
                 descricao: dado.descricao,
                 completa: dado.completa === 0 ? false : true
             }
-        }) 
+        })
 
         const tarefasAtivas = tarefas.filter((tarefa) => {
             return tarefa.completa === false && tarefa
@@ -176,20 +176,19 @@ app.get('/', (requisicao, resposta) => {
     })
 })
 
-const conexao = mysql.createConnection ({
+const conexao = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "root",
-    database: "todoapp",
-    port: 3306
+    database: "todoapp"
 })
 
 conexao.connect((erro) => {
     if (erro) {
         return console.log(erro)
-    }
+    } 
 
-    console.log("Estou conectado ao MySQL!")
+    console.log("Estou conectado ao MySQL.")
 
     app.listen(3000, () => {
         console.log("Servidor rodando na porta 3000!")
